@@ -42,7 +42,7 @@ app.get('/api/users/:id', (req, res) => {
 
 
 //POST Request
- 
+//Add the user to the array with the given params id and request body
 app.post('/api/users', (req, res) => {
     //Create new user
     const body = req.body;
@@ -56,7 +56,7 @@ app.post('/api/users', (req, res) => {
 
 
 //PATCH Request
-
+//Update the information of the user from the array with the given params id and request body
 app.patch('/api/users/:id', (req, res) => {
     //Updating the user with id
     const id = Number(req.params.id);
@@ -67,16 +67,37 @@ app.patch('/api/users/:id', (req, res) => {
     users[userIndex] = { ...users[userIndex], ...body };
     
     fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
-        return res.json({ status: "sucess", user: users[userIndex] });
+        return res.json({ status: "success", user: users[userIndex] });
     })
 })
 
 //DELETE Request
-
-app.delete('/api/users:id', (req, res) => {
+//Delete the user from the array with the given params id
+app.delete('/api/users/:id', (req, res) => {
     //Delete the user with id
-    return res.json({ status: "pending" });
+    const id = Number(req.params.id);
+    const userIndex = users.findIndex((user) => user.id === id);
+    const removedUser = users.splice(userIndex, 1);
+
+    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
+        return res.json({ status: "sucess", user_removed: removedUser} );
+    })
 })
+
+//PUT Request
+//Update the entire information of the user from the array with the given params id and request body
+app.put('/api/users/:id', (req, res) => {
+    const id = Number(req.params.id);
+    const userIndex = users.findIndex((user) => user.id === id);
+    const body = req.body;
+
+    users[userIndex] = { ...users[userIndex], id: id, ...body };
+
+    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
+        return res.json({ status: "sucess", updated_user: users[userIndex]} );
+    })
+})
+
 /* 
 //Merging all requests with id 
 app.route('/api/users/:id')
